@@ -1,10 +1,10 @@
-package edu.ub.bda.gossiper.pinger;
+package com.bloobirds.training.gossiper.pinger;
 
+import com.bloobirds.training.gossiper.model.Connection;
+import com.bloobirds.training.gossiper.model.ConnectionTable;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.ub.bda.gossiper.model.Connection;
-import edu.ub.bda.gossiper.model.ConnectionTable;
-import edu.ub.bda.gossiper.GossiperConfigurationProperties;
-import edu.ub.bda.gossiper.model.GossiperResponse;
+import com.bloobirds.training.gossiper.GossiperConfigurationProperties;
+import com.bloobirds.training.gossiper.model.GossiperResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
@@ -39,13 +39,13 @@ public class PingerService {
     }
 
     public void ping() {
-        List<Connection> connections = connectionTable.get(properties.getPingAmount());
-        List<Connection> allConnections = connectionTable.getAll();
+        List<com.bloobirds.training.gossiper.model.Connection> connections = connectionTable.get(properties.getPingAmount());
+        List<com.bloobirds.training.gossiper.model.Connection> allConnections = connectionTable.getAll();
         connections.forEach(connection -> executorService.execute(() -> this.ping(connection, allConnections)));
 
     }
 
-    private void ping(Connection connection, List<Connection> allConnections) {
+    private void ping(com.bloobirds.training.gossiper.model.Connection connection, List<Connection> allConnections) {
         Request req = null;
         try {
             req = new Request.Builder()

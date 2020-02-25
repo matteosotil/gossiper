@@ -1,4 +1,4 @@
-package edu.ub.bda.gossiper.endpoint;
+package com.bloobirds.training.gossiper.endpoint;
 
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -1,4 +1,4 @@
-package edu.ub.bda.gossiper.model;
+package com.bloobirds.training.gossiper.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Value;

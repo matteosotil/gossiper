@@ -1,4 +1,4 @@
-package edu.ub.bda.gossiper;
+package com.bloobirds.training.gossiper;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

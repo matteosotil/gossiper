@@ -1,4 +1,4 @@
-package edu.ub.bda.gossiper.model;
+package com.bloobirds.training.gossiper.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

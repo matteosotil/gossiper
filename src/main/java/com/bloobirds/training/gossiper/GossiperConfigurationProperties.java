@@ -1,4 +1,4 @@
-package edu.ub.bda.gossiper;
+package com.bloobirds.training.gossiper;
 
 import lombok.Getter;
 import lombok.Setter;

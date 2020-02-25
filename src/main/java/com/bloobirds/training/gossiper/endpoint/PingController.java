@@ -1,9 +1,9 @@
-package edu.ub.bda.gossiper.endpoint;
+package com.bloobirds.training.gossiper.endpoint;
 
-import edu.ub.bda.gossiper.model.Connection;
-import edu.ub.bda.gossiper.model.ConnectionTable;
-import edu.ub.bda.gossiper.GossiperConfigurationProperties;
-import edu.ub.bda.gossiper.model.GossiperResponse;
+import com.bloobirds.training.gossiper.model.Connection;
+import com.bloobirds.training.gossiper.model.ConnectionTable;
+import com.bloobirds.training.gossiper.GossiperConfigurationProperties;
+import com.bloobirds.training.gossiper.model.GossiperResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.web.bind.annotation.RequestBody;

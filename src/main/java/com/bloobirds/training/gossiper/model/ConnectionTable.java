@@ -1,6 +1,6 @@
-package edu.ub.bda.gossiper.model;
+package com.bloobirds.training.gossiper.model;
 
-import edu.ub.bda.gossiper.GossiperConfigurationProperties;
+import com.bloobirds.training.gossiper.GossiperConfigurationProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
