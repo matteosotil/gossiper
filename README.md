@@ -45,6 +45,15 @@ two constant parameters `pingTime` (the ping intervals) and `pingAmount` (the am
 So given we have `N` nodes and `pingAmount` is `K` and `pingTime` is `T` then we have
 guarantees that each `T` units of time there are `NK` communications.
 
+## Install and notes
+
+Java 8 or later, maven 3 (remember, `mvn clean package` to clean and build sources including jar file).
+
+[Lombok](https://projectlombok.org/) is a dependency to remove boilerplate code, so maybe your code editor 
+finds some lombok generated methods missing. There are config instructions for all major
+code editors [here](https://projectlombok.org/setup/overview).
+
+
 ## The challenge
 
 There is a bug, and there are improvements. :D
