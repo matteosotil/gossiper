@@ -1,9 +1,8 @@
 # Gossiper
 
-At [Bloobirds](https://bloobirds.com), Java, Spring Framework and distributed systems are two core technologies which the development team 
-deals with every day.
-
-As part of our constant training we've built a challenge on those technologies: Gossiper.
+At [Bloobirds](https://bloobirds.com) development team technologies like Java, Spring Framework and distributed systems 
+are truly core and ones we deal with them daily. As part of our constant training we've built a challenge on those 
+technologies: Gossiper.
 
 ## What does it do?
 
@@ -107,4 +106,10 @@ write a dockerfile for java... and there are better ways. Which would you end up
 Yes, it simple and cool, but useless. The next step would be to send data to any node
 and see that data being replicated to other nodes, and being able to query that data from
 anywhere. Quite aggressive a full replication... so it would be even better (and way more
-difficult) to being able to control the replication level. 
+difficult) to being able to control the replication level.
+
+## Thanks
+
+This toy-training project was inspired at classrooms on Advanced Databases subject at [Software Engineering Degree at 
+University of Barcelona](https://mat.ub.edu/degreecomputer/) from 2018 to 2019, and mostly by the curiosity of more
+ than thirty students (some of them ended working at Bloobirds) and two teachers (that also were working at Bloobirds).
