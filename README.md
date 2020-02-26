@@ -19,7 +19,7 @@ Start a second node at port `9002` called `robin`, using `batman` as seed
 ```shell script
  java -jar target/gossiper-1.0.0-SNAPSHOT.jar \
     --server.port=9002 \
-    --gossiper.ownName=batman \
+    --gossiper.ownName=robin \
     --gossiper.port=9002 \
     --gossiper.seedName=robin \
     --gossiper.seedHostname=127.0.0.1:9001
