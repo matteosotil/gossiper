@@ -25,16 +25,8 @@ public class ConnectionTable {
 		}
 	}
 
-	public void addConnections(Collection<Connection> newConnections) {
-		newConnections.forEach(newConnection -> {
-			if (properties.getOwnName().equals(newConnection.getName())) {
-				return;
-			}
-			boolean success = connections.add(newConnection);
-			if (success) {
-				log.info("Node {} joined", newConnection.getName());
-			}
-		});
+	public void addConnections(String sourceNodeName, Collection<Connection> newConnections) {
+		newConnections.forEach(newConnection -> add(sourceNodeName, newConnection));
 	}
 
 	public void remove(Connection connection) {
@@ -62,21 +54,14 @@ public class ConnectionTable {
 	 * @param connection
 	 */
 	public void add(String sourceNodeName, Connection connection) {
-		boolean success;
 		if (properties.getOwnName().equals(connection.getName())) {
 			return;
 		}
+		boolean success;
 		synchronized (this) {
-			Set<String> connectionProposals = candidateConnections.get(connection.getName());
-			if (connectionProposals == null) {
-				connectionProposals = new HashSet<String>();
-				candidateConnections.put(connection.getName(), connectionProposals);
-			}
-			connectionProposals.add(sourceNodeName);
-			if (connectionProposals.size() < properties.getTrustThreshold()) {
+			if (!shouldAddConnection(sourceNodeName, connection)) {
 				return;
 			}
-			candidateConnections.remove(connection.getName());
 			success = connections.add(connection);
 		}
 		if (success) {
@@ -84,4 +69,17 @@ public class ConnectionTable {
 		}
 	}
 
+	private boolean shouldAddConnection(String sourceNodeName, Connection connection) {
+		if (sourceNodeName.equals(connection.getName())) {
+			return true;
+		}
+		Set<String> connectionProposals = candidateConnections.computeIfAbsent(connection.getName(),
+				k -> new HashSet<String>());
+		connectionProposals.add(sourceNodeName);
+		if (connectionProposals.size() < properties.getTrustThreshold()) {
+			return false;
+		}
+		candidateConnections.remove(connection.getName());
+		return true;
+	}
 }

@@ -56,7 +56,7 @@ public class PingerService {
             if (execute.body() != null) {
                 responseBody = execute.body().string();
                 GossiperResponse response = objectMapper.readValue(responseBody, GossiperResponse.class);
-                connectionTable.addConnections(response.getConnections());
+                connectionTable.addConnections(response.getName(), response.getConnections());
                 return;
             }
             connectionTable.remove(connection);
