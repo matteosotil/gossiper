@@ -27,16 +27,27 @@ public class ConnectionTableTest {
 	}
 
 	@Test
-	public void shouldAddConnectionWhenAddingDifferentNode() {
+	public void shouldAddConnectionWhenAddingDifferentNodeAndTrustThresholdReached() {
 		Connection newConnection = new Connection("anotherNodeName", HOST_NAME);
-		sutConnectionTable.add(newConnection);
+		BDDMockito.given(stubProperties.getTrustThreshold()).willReturn(2);
+		sutConnectionTable.add("sourceNodeName", newConnection);
+		sutConnectionTable.add("anotherSourceNodeName", newConnection);
 		Assertions.assertThat(sutConnectionTable.getAll()).containsExactly(newConnection);
 	}
 
 	@Test
 	public void shouldNotAddConnectionWhenAddingOwnNode() {
 		Connection newConnection = new Connection(OWN_NODE_NAME, HOST_NAME);
-		sutConnectionTable.add(newConnection);
+		sutConnectionTable.add("sourceNodeName", newConnection);
+		Assertions.assertThat(sutConnectionTable.getAll()).isEmpty();
+	}
+
+	@Test
+	public void shouldNotAddConnectionWhenTrustThresholdNotReached() {
+		Connection newConnection = new Connection("anotherNodeName", HOST_NAME);
+		BDDMockito.given(stubProperties.getTrustThreshold()).willReturn(2);
+		sutConnectionTable.add("sourceNodeName", newConnection);
+		sutConnectionTable.add("sourceNodeName", newConnection);
 		Assertions.assertThat(sutConnectionTable.getAll()).isEmpty();
 	}
 }

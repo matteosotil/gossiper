@@ -13,11 +13,13 @@ import java.util.*;
 public class ConnectionTable {
 
 	private final Set<Connection> connections;
+	private final Map<String, Set<String>> candidateConnections;
 	private final GossiperConfigurationProperties properties;
 
 	public ConnectionTable(GossiperConfigurationProperties properties) {
 		this.properties = properties;
 		connections = Collections.synchronizedSet(new HashSet<>());
+		candidateConnections = Collections.synchronizedMap(new HashMap<String, Set<String>>());
 		if (properties.getSeedHostname() != null && properties.getSeedName() != null) {
 			connections.addAll(Collections.singleton(new Connection(properties.getSeedName(), properties.getSeedHostname())));
 		}
@@ -54,14 +56,29 @@ public class ConnectionTable {
 
 	/**
 	 * Adds a connection if its name is different that own name.
-	 * 
+	 *
+	 * @param sourceNodeName
+	 *
 	 * @param connection
 	 */
-	public void add(Connection connection) {
+	public void add(String sourceNodeName, Connection connection) {
+		boolean success;
 		if (properties.getOwnName().equals(connection.getName())) {
 			return;
 		}
-		boolean success = connections.add(connection);
+		synchronized (this) {
+			Set<String> connectionProposals = candidateConnections.get(connection.getName());
+			if (connectionProposals == null) {
+				connectionProposals = new HashSet<String>();
+				candidateConnections.put(connection.getName(), connectionProposals);
+			}
+			connectionProposals.add(sourceNodeName);
+			if (connectionProposals.size() < properties.getTrustThreshold()) {
+				return;
+			}
+			candidateConnections.remove(connection.getName());
+			success = connections.add(connection);
+		}
 		if (success) {
 			log.info("Node {} joined", connection.getName());
 		}
