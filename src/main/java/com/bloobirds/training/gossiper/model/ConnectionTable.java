@@ -28,10 +28,7 @@ public class ConnectionTable {
             if (properties.getOwnName().equals(newConnection.getName())) {
                 return;
             }
-            boolean success = connections.add(newConnection);
-            if (success) {
-                log.info("Node {} joined", newConnection.getName());
-            }
+			add(newConnection);
         });
     }
 
@@ -52,4 +49,10 @@ public class ConnectionTable {
         return new ArrayList<>(connections);
     }
 
+	public void add(Connection newConnection) {
+		boolean success = connections.add(newConnection);
+		if (success) {
+			log.info("Node {} joined", newConnection.getName());
+		}
+	}
 }
