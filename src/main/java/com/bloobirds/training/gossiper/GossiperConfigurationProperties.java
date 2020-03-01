@@ -15,5 +15,7 @@ public class GossiperConfigurationProperties {
     private String ownName;
     private long pingTime = 5; // seconds
     private int pingAmount = 2;
+	private String backupFile = "backupFile.txt";
+	private int backupTime = 10; // seconds
 
 }
