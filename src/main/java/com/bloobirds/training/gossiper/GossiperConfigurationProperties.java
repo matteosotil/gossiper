@@ -11,6 +11,7 @@ public class GossiperConfigurationProperties {
 
     private String seedName;
     private String seedHostname;
+	private String hostName;
     private String port;
     private String ownName;
     private long pingTime = 5; // seconds
