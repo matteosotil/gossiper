@@ -31,69 +31,41 @@ public class ConnectionTableTest {
 	}
 
 	@Test
-	public void shouldAddConnectionWhenAddingDifferentNodeAndTrustThresholdReached() {
+	public void shouldAddConnectionWhenAddingNodeAndTrustThresholdReached() {
 		Connection newConnection = new Connection("anotherNodeName", HOST_NAME);
 		BDDMockito.given(stubProperties.getTrustThreshold()).willReturn(2);
-		sutConnectionTable.add("sourceNodeName", newConnection);
-		sutConnectionTable.add("anotherSourceNodeName", newConnection);
+		sutConnectionTable.add(newConnection);
+		sutConnectionTable.add(newConnection);
 		Assertions.assertThat(sutConnectionTable.getAll()).containsExactly(newConnection);
-	}
-
-	@Test
-	public void shouldAddConnectionWhenAddingDifferentNodeAndSameSourceAndTrustThresholdNotReached() {
-		Connection newConnection = new Connection("anotherNodeName", HOST_NAME);
-		BDDMockito.given(stubProperties.getTrustThreshold()).willReturn(3);
-		sutConnectionTable.add("anotherNodeName", newConnection);
-		Assertions.assertThat(sutConnectionTable.getAll()).containsExactly(newConnection);
-	}
-
-	@Test
-	public void shouldNotAddConnectionWhenAddingOwnNode() {
-		Connection newConnection = new Connection(OWN_NODE_NAME, HOST_NAME);
-		sutConnectionTable.add("sourceNodeName", newConnection);
-		Assertions.assertThat(sutConnectionTable.getAll()).isEmpty();
 	}
 
 	@Test
 	public void shouldNotAddConnectionWhenTrustThresholdNotReached() {
 		Connection newConnection = new Connection("anotherNodeName", HOST_NAME);
-		BDDMockito.given(stubProperties.getTrustThreshold()).willReturn(2);
-		sutConnectionTable.add("sourceNodeName", newConnection);
-		sutConnectionTable.add("sourceNodeName", newConnection);
+		BDDMockito.given(stubProperties.getTrustThreshold()).willReturn(3);
+		sutConnectionTable.add(newConnection);
+		sutConnectionTable.add(newConnection);
 		Assertions.assertThat(sutConnectionTable.getAll()).isEmpty();
 	}
 
 	@Test
-	public void shouldAddConnectionsWhenAddingDifferentNodeAndTrustThresholdReached() {
+	public void shouldAddConnectionsWhenTrustThresholdReached() {
 		Connection newConnection1 = new Connection("oneNodeName", HOST_NAME);
 		Connection newConnection2 = new Connection("anotherNodeName", HOST_NAME);
 		Collection<Connection> connections = Stream.of(newConnection1, newConnection2).collect(Collectors.toList());
 		BDDMockito.given(stubProperties.getTrustThreshold()).willReturn(2);
-		sutConnectionTable.addConnections("sourceNodeName", connections);
-		sutConnectionTable.addConnections("anotherSourceNodeName", connections);
+		sutConnectionTable.addConnections(connections);
+		sutConnectionTable.addConnections(connections);
 		Assertions.assertThat(sutConnectionTable.getAll()).containsExactly(newConnection1, newConnection2);
 	}
 
 	@Test
-	public void shouldNotAddConnectionsWhenAddingDifferentNodeAndTrustThresholdNotReached() {
+	public void shouldNotAddConnectionsWhenThresholdNotReached() {
 		Connection newConnection1 = new Connection("oneNodeName", HOST_NAME);
 		Connection newConnection2 = new Connection("anotherNodeName", HOST_NAME);
 		Collection<Connection> connections = Stream.of(newConnection1, newConnection2).collect(Collectors.toList());
 		BDDMockito.given(stubProperties.getTrustThreshold()).willReturn(2);
-		sutConnectionTable.addConnections("sourceNodeName", connections);
-		sutConnectionTable.addConnections("sourceNodeName", connections);
+		sutConnectionTable.addConnections(connections);
 		Assertions.assertThat(sutConnectionTable.getAll()).isEmpty();
-	}
-
-	@Test
-	public void shouldNotAddConnectionsWhenAddingOwnNode() {
-		Connection newConnection1 = new Connection(OWN_NODE_NAME, HOST_NAME);
-		Connection newConnection2 = new Connection(OWN_NODE_NAME, HOST_NAME);
-		Collection<Connection> connections = Stream.of(newConnection1, newConnection2).collect(Collectors.toList());
-		BDDMockito.given(stubProperties.getTrustThreshold()).willReturn(2);
-		sutConnectionTable.addConnections("sourceNodeName", connections);
-		sutConnectionTable.addConnections("anotherSourceNodeName", connections);
-		Assertions.assertThat(sutConnectionTable.getAll()).isEmpty();
-		;
 	}
 }

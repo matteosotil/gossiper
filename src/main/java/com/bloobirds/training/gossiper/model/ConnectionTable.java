@@ -13,20 +13,20 @@ import java.util.*;
 public class ConnectionTable {
 
 	private final Set<Connection> connections;
-	private final Map<String, Set<String>> candidateConnections;
+	private final Map<String, Integer> candidateConnections;
 	private final GossiperConfigurationProperties properties;
 
 	public ConnectionTable(GossiperConfigurationProperties properties) {
 		this.properties = properties;
 		connections = Collections.synchronizedSet(new HashSet<>());
-		candidateConnections = Collections.synchronizedMap(new HashMap<String, Set<String>>());
+		candidateConnections = Collections.synchronizedMap(new HashMap<String, Integer>());
 		if (properties.getSeedHostname() != null && properties.getSeedName() != null) {
 			connections.addAll(Collections.singleton(new Connection(properties.getSeedName(), properties.getSeedHostname())));
 		}
 	}
 
-	public void addConnections(String sourceNodeName, Collection<Connection> newConnections) {
-		newConnections.forEach(newConnection -> add(sourceNodeName, newConnection));
+	public void addConnections(Collection<Connection> newConnections) {
+		newConnections.forEach(newConnection -> add(newConnection));
 	}
 
 	public void remove(Connection connection) {
@@ -47,19 +47,17 @@ public class ConnectionTable {
 	}
 
 	/**
-	 * Adds a connection if its name is different that own name.
-	 *
-	 * @param sourceNodeName
+	 * Adds a connection if it was not present and trust threshold is reached.
 	 *
 	 * @param connection
 	 */
-	public void add(String sourceNodeName, Connection connection) {
+	public void add(Connection connection) {
 		if (properties.getOwnName().equals(connection.getName())) {
 			return;
 		}
 		boolean success;
 		synchronized (this) {
-			if (!shouldAddConnection(sourceNodeName, connection)) {
+			if (!shouldAddConnection(connection)) {
 				return;
 			}
 			success = connections.add(connection);
@@ -69,14 +67,11 @@ public class ConnectionTable {
 		}
 	}
 
-	private boolean shouldAddConnection(String sourceNodeName, Connection connection) {
-		if (sourceNodeName.equals(connection.getName())) {
-			return true;
-		}
-		Set<String> connectionProposals = candidateConnections.computeIfAbsent(connection.getName(),
-				k -> new HashSet<String>());
-		connectionProposals.add(sourceNodeName);
-		if (connectionProposals.size() < properties.getTrustThreshold()) {
+	private boolean shouldAddConnection(Connection connection) {
+		Integer connectionProposals = candidateConnections.computeIfAbsent(connection.getName(), k -> 0);
+		connectionProposals += 1;
+		if (connectionProposals < properties.getTrustThreshold()) {
+			candidateConnections.put(connection.getName(), connectionProposals);
 			return false;
 		}
 		candidateConnections.remove(connection.getName());

@@ -23,8 +23,8 @@ public class PingController {
     @JsonPost("/ping")
     public @ResponseBody
     GossiperResponse answer(@RequestBody GossiperResponse newConnections, ServletRequest servletRequest) {
-    	connectionTable.addConnections(newConnections.getName(), newConnections.getConnections());
-		connectionTable.add(newConnections.getName(), new Connection(newConnections.getName(),
+		connectionTable.addConnections(newConnections.getConnections());
+		connectionTable.add(new Connection(newConnections.getName(),
 				servletRequest.getServerName() + ":" + newConnections.getPort()));
         return new GossiperResponse(properties.getOwnName(), properties.getPort(),  connectionTable.getAll());
     }
