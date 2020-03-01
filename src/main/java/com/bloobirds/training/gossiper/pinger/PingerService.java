@@ -44,6 +44,9 @@ public class PingerService {
     }
 
     private void ping(com.bloobirds.training.gossiper.model.Connection connection, List<Connection> allConnections) {
+		if (connection.getName().equals(properties.getOwnName())) {
+			return;
+		}
         Request req = null;
         try {
             req = new Request.Builder()

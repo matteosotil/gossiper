@@ -1,35 +1,21 @@
 package com.bloobirds.training.gossiper.model;
 
-import com.bloobirds.training.gossiper.GossiperConfigurationProperties;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Slf4j
 @Service
-@EnableConfigurationProperties({GossiperConfigurationProperties.class})
+@RequiredArgsConstructor
 public class ConnectionTable {
 
-    private final Set<Connection> connections;
-    private final GossiperConfigurationProperties properties;
-
-    public ConnectionTable(GossiperConfigurationProperties properties) {
-        this.properties = properties;
-        connections = Collections.synchronizedSet(new HashSet<>());
-        if (properties.getSeedHostname() != null && properties.getSeedName() != null) {
-            connections.addAll(Collections.singleton(new Connection(properties.getSeedName(), properties.getSeedHostname())));
-        }
-    }
+	private final Set<Connection> connections = Collections.synchronizedSet(new HashSet<>());
 
     public void addConnections(Collection<Connection> newConnections) {
-        newConnections.forEach(newConnection -> {
-            if (properties.getOwnName().equals(newConnection.getName())) {
-                return;
-            }
-			add(newConnection);
-        });
+		newConnections.forEach(newConnection -> add(newConnection));
     }
 
     public void remove(Connection connection) {

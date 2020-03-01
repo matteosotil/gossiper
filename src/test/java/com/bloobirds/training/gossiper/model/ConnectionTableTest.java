@@ -7,27 +7,18 @@ import java.util.stream.Stream;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.BDDMockito;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import com.bloobirds.training.gossiper.GossiperConfigurationProperties;
 
 public class ConnectionTableTest {
 
-	private static final String OWN_NODE_NAME = "ownNodeName";
 	private static final String HOST_NAME = "hostName";
 
 	private ConnectionTable sutConnectionTable;
 
-	@Mock
-	private GossiperConfigurationProperties stubProperties;
-
 	@Before
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
-		sutConnectionTable = new ConnectionTable(stubProperties);
-		BDDMockito.given(stubProperties.getOwnName()).willReturn(OWN_NODE_NAME);
+		sutConnectionTable = new ConnectionTable();
 	}
 
 	@Test
