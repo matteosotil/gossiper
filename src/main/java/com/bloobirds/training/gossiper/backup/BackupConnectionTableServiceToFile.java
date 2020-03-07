@@ -1,19 +1,23 @@
 package com.bloobirds.training.gossiper.backup;
 
-import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.bloobirds.training.gossiper.GossiperConfigurationProperties;
 import com.bloobirds.training.gossiper.model.Connection;
@@ -50,7 +54,7 @@ public class BackupConnectionTableServiceToFile implements BackupConnectionTable
 		if (connections.isEmpty()) {
 			return;
 		}
-		try (FileOutputStream fileOutput = new FileOutputStream(new File(properties.getBackupFile()));
+		try (FileOutputStream fileOutput = getOwnFileOutputStream();
 				ObjectOutputStream objectOutput = new ObjectOutputStream(fileOutput)) {
 			objectOutput.writeObject(new ArrayList<Connection>(connections));
 		} catch (IOException e) {
@@ -66,10 +70,10 @@ public class BackupConnectionTableServiceToFile implements BackupConnectionTable
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Connection> read() {
-		if (!isEnabled()) {
+		if (!isBackupReady()) {
 			return Collections.emptyList();
 		}
-		try (FileInputStream fileInput = new FileInputStream(new File(properties.getBackupFile()));
+		try (FileInputStream fileInput = getFileInputStream();
 				ObjectInputStream objectInput = new ObjectInputStream(fileInput)) {
 			return (List<Connection>) objectInput.readObject();
 		} catch (Exception e) {
@@ -85,19 +89,7 @@ public class BackupConnectionTableServiceToFile implements BackupConnectionTable
 	 */
 	@Override
 	public boolean isEnabled() {
-		return properties.getBackupFile() != null;
-	}
-
-	@Override
-	public void clean() {
-		if (!isBackupReady()) {
-			return;
-		}
-		try {
-			Files.delete(Paths.get(properties.getBackupFile()));
-		} catch (IOException e) {
-			log.error("Error deleting file", e);
-		}
+		return !StringUtils.isEmpty(properties.getBackupDirectory());
 	}
 
 	@Override
@@ -105,6 +97,31 @@ public class BackupConnectionTableServiceToFile implements BackupConnectionTable
 		if (!isEnabled()) {
 			return false;
 		}
-		return Paths.get(properties.getBackupFile()).toFile().exists();
+		return !getBackupFiles().isEmpty();
+	}
+
+	private FileInputStream getFileInputStream() throws IOException {
+		return new FileInputStream(getBackupFiles().get(0));
+	}
+
+	private List<String> getBackupFiles() {
+		Path directory = Paths.get(properties.getBackupDirectory());
+		try (Stream<Path> walk = Files.walk(directory)) {
+			List<String> result = walk.filter(Files::isRegularFile).map(x -> x.toString()).collect(Collectors.toList());
+			if (result.isEmpty()) {
+				return Collections.emptyList();
+			}
+			return result;
+		} catch (IOException e) {
+			return Collections.emptyList();
+		}
+	}
+
+	private FileOutputStream getOwnFileOutputStream() throws FileNotFoundException {
+		return new FileOutputStream(getOwnFilePath().toFile());
+	}
+
+	private Path getOwnFilePath() {
+		return Paths.get(properties.getBackupDirectory(), properties.getOwnName());
 	}
 }

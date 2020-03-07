@@ -26,8 +26,6 @@ public interface BackupConnectionTableService {
 
 	boolean isEnabled();
 
-	void clean();
-
 	boolean isBackupReady();
 
 }
