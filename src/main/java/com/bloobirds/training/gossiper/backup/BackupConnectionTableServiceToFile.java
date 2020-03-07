@@ -12,6 +12,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -101,7 +102,9 @@ public class BackupConnectionTableServiceToFile implements BackupConnectionTable
 	}
 
 	private FileInputStream getFileInputStream() throws IOException {
-		return new FileInputStream(getBackupFiles().get(0));
+		List<String> backupFiles = getBackupFiles();
+		int selectedFileIndex = ThreadLocalRandom.current().nextInt(backupFiles.size());
+		return new FileInputStream(getBackupFiles().get(selectedFileIndex));
 	}
 
 	private List<String> getBackupFiles() {
