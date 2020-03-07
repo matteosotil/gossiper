@@ -1,7 +1,6 @@
 package com.bloobirds.training.gossiper.backup;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -55,7 +54,7 @@ public class BackupConnectionTableServiceToFile implements BackupConnectionTable
 		if (connections.isEmpty()) {
 			return;
 		}
-		try (FileOutputStream fileOutput = getOwnFileOutputStream();
+		try (FileOutputStream fileOutput = new FileOutputStream(getWriteFileName());
 				ObjectOutputStream objectOutput = new ObjectOutputStream(fileOutput)) {
 			objectOutput.writeObject(new ArrayList<Connection>(connections));
 		} catch (IOException e) {
@@ -74,7 +73,7 @@ public class BackupConnectionTableServiceToFile implements BackupConnectionTable
 		if (!isBackupAvailable()) {
 			return Collections.emptyList();
 		}
-		try (FileInputStream fileInput = getFileInputStream();
+		try (FileInputStream fileInput = new FileInputStream(getReadFileName());
 				ObjectInputStream objectInput = new ObjectInputStream(fileInput)) {
 			return (List<Connection>) objectInput.readObject();
 		} catch (Exception e) {
@@ -101,10 +100,14 @@ public class BackupConnectionTableServiceToFile implements BackupConnectionTable
 		return !getBackupFiles().isEmpty();
 	}
 
-	private FileInputStream getFileInputStream() throws IOException {
+	private String getReadFileName() {
 		List<String> backupFiles = getBackupFiles();
 		int selectedFileIndex = ThreadLocalRandom.current().nextInt(backupFiles.size());
-		return new FileInputStream(getBackupFiles().get(selectedFileIndex));
+		return getBackupFiles().get(selectedFileIndex);
+	}
+
+	private String getWriteFileName() {
+		return Paths.get(properties.getBackupDirectory(), properties.getOwnName()).toString();
 	}
 
 	private List<String> getBackupFiles() {
@@ -118,13 +121,5 @@ public class BackupConnectionTableServiceToFile implements BackupConnectionTable
 		} catch (IOException e) {
 			return Collections.emptyList();
 		}
-	}
-
-	private FileOutputStream getOwnFileOutputStream() throws FileNotFoundException {
-		return new FileOutputStream(getOwnFilePath().toFile());
-	}
-
-	private Path getOwnFilePath() {
-		return Paths.get(properties.getBackupDirectory(), properties.getOwnName());
 	}
 }
