@@ -24,8 +24,18 @@ public interface BackupConnectionTableService {
 	 */
 	List<Connection> read();
 
+	/**
+	 * Checks if backup is enabled for this node.
+	 * 
+	 * @return
+	 */
 	boolean isEnabled();
 
-	boolean isBackupReady();
+	/**
+	 * Checks if there is some backup available
+	 * 
+	 * @return
+	 */
+	boolean isBackupAvailable();
 
 }

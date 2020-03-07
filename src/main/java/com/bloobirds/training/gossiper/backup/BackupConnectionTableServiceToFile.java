@@ -70,7 +70,7 @@ public class BackupConnectionTableServiceToFile implements BackupConnectionTable
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Connection> read() {
-		if (!isBackupReady()) {
+		if (!isBackupAvailable()) {
 			return Collections.emptyList();
 		}
 		try (FileInputStream fileInput = getFileInputStream();
@@ -93,7 +93,7 @@ public class BackupConnectionTableServiceToFile implements BackupConnectionTable
 	}
 
 	@Override
-	public boolean isBackupReady() {
+	public boolean isBackupAvailable() {
 		if (!isEnabled()) {
 			return false;
 		}
