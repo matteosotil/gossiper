@@ -4,6 +4,7 @@ import java.util.Collections;
 import javax.annotation.PostConstruct;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
 
 import com.bloobirds.training.gossiper.GossiperConfigurationProperties;
@@ -19,6 +20,7 @@ public class ConnectionTableInitializer {
 	private final GossiperConfigurationProperties properties;
 	private final BackupConnectionTableService backupConnectionTable;
 	private final ConnectionTable connectionTable;
+	private final ConfigurableApplicationContext context;
 
 	@PostConstruct
 	public void init() {
@@ -28,5 +30,8 @@ public class ConnectionTableInitializer {
 					Collections.singleton(new Connection(properties.getSeedName(), properties.getSeedHostname())));
 		}
 		connectionTable.addConnections(backupConnectionTable.read());
+		if (backupConnectionTable.isBackupAvailable() && connectionTable.size() < 2) {
+			context.close();
+		}
 	}
 }
