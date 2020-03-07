@@ -15,6 +15,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.annotation.PreDestroy;
+
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -99,6 +101,16 @@ public class BackupConnectionTableServiceToFile implements BackupConnectionTable
 			return false;
 		}
 		return !getBackupFiles().isEmpty();
+	}
+
+	@PreDestroy
+	public void clean() {
+		try {
+			Files.delete(Paths.get(getWriteFileName()));
+			log.info("Backup file deleted");
+		} catch (IOException e) {
+			log.error("Error cleaning backup file", e);
+		}
 	}
 
 	private String getReadFileName() {

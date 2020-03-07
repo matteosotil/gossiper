@@ -38,4 +38,9 @@ public interface BackupConnectionTableService {
 	 */
 	boolean isBackupAvailable();
 
+	/**
+	 * Removes backup.
+	 */
+	void clean();
+
 }
