@@ -41,4 +41,8 @@ public class ConnectionTable {
 			log.info("Node {} joined", newConnection.getName());
 		}
 	}
+
+	public int size() {
+		return connections.size();
+	}
 }
