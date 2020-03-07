@@ -71,6 +71,7 @@ public class BackupConnectionTableServiceToFile implements BackupConnectionTable
 	@SuppressWarnings("unchecked")
 	public List<Connection> read() {
 		if (!isBackupAvailable()) {
+			log.warn("No backup files to read");
 			return Collections.emptyList();
 		}
 		try (FileInputStream fileInput = new FileInputStream(getReadFileName());
