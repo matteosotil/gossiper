@@ -27,8 +27,6 @@ public class ConnectionTableInitializer {
 			connectionTable.addConnections(
 					Collections.singleton(new Connection(properties.getSeedName(), properties.getSeedHostname())));
 		}
-		if (backupConnectionTable.isBackupAvailable()) {
-			connectionTable.addConnections(backupConnectionTable.read());
-		}
+		connectionTable.addConnections(backupConnectionTable.read());
 	}
 }
